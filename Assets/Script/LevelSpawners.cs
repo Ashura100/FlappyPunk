@@ -12,10 +12,10 @@ public class LevelSpawner : MonoBehaviour
     {
         GameObject Spawned = Instantiate(TemplateEmpty, SpawnTo.transform);
         Spawned.transform.parent = transform;
-        SpawnTo.transform.position += new Vector3(0, 0, -15);
+        SpawnTo.transform.position += new Vector3(0, 0, -50);
         GameObject Spawned1 = Instantiate(TemplateEmpty, SpawnTo.transform);
         Spawned1.transform.parent = transform;
-        SpawnTo.transform.position += new Vector3(0, 0, -15);
+        SpawnTo.transform.position += new Vector3(0, 0, -50);
         GameObject Spawned2 = Instantiate(TemplateEmpty, SpawnTo.transform);
         Spawned2.transform.parent = transform;
     }
@@ -24,7 +24,7 @@ public class LevelSpawner : MonoBehaviour
     {
         transform.position += new Vector3(0, 0, 5 * Time.deltaTime);
 
-        if (transform.position.z - DistanceTravelled >= 15)
+        if (transform.position.z - DistanceTravelled >= 50)
         {
             DistanceTravelled = transform.position.z;
             GameObject Spawned = Instantiate(Template, SpawnTo.transform);

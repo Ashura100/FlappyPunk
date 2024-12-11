@@ -8,7 +8,6 @@ public class Mouvement : MonoBehaviour
     private bool cooldown;
 
     public float jumpForce = 10;
-
     private int speed;
 
     private void Start()
@@ -32,5 +31,18 @@ public class Mouvement : MonoBehaviour
     {
         yield return new WaitForSeconds(0.3f);
         cooldown = false;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Score"))
+        {
+            GameManager.Instance.CurrentScore++;
+        }
+
+        if (other.CompareTag("Obstacle"))
+        {
+            GameManager.Instance.IsCrashedStatus = true;
+        }
     }
 }
