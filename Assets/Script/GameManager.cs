@@ -1,4 +1,5 @@
 using System;
+using System.Xml.Linq;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -8,7 +9,7 @@ public class GameManager : MonoBehaviour
     public event Action<bool> IsCrashed;
 
     private float _currentScore;
-    private bool _isCrashed;
+    public bool _isCrashed;
 
     public float CurrentScore
     {
@@ -45,10 +46,40 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        Time.timeScale = 0;
+    }
+
+    public void StartGame()
+    {
+        Time.timeScale = 1;
+    }
+
+    public void PauseGame()
+    {
+        Time.timeScale = 0;
+    }
+
     public void ResetGame()
     {
         CurrentScore = 0;
         IsCrashedStatus = false;
     }
 
+    public void Exit()
+    {
+        if (Application.isEditor)//jeu tourne dans l'editeur
+        {
+#if UNITY_EDITOR //Build = Directive de compilation(transformation langage de haut niveau en langage machine)  = si editor =/ compilation ignoré
+            UnityEditor.EditorApplication.isPlaying = false;
+#endif
+
+
+        }
+        else
+        {
+            Application.Quit();
+        }
+    }
 }
