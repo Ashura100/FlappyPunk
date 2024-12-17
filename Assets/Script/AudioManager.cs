@@ -1,19 +1,16 @@
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
-using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance;
 
     public AudioMixer audioMixer;
-    public AudioSource musicGame;
+    public AudioSource musicPlayer;
     public AudioSource sfxPlayer;
 
     [SerializeField]
-    private AudioClip carSound;
+    private AudioClip themeSound, gameSound, carSound;
 
     private void Awake()
     {
@@ -21,38 +18,23 @@ public class AudioManager : MonoBehaviour
             Destroy(gameObject);
         else
             Instance = this;
-
-        DontDestroyOnLoad(gameObject);
-        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    public void PlayTheme()
     {
-        PlayMusicForScene(scene.name);
+        musicPlayer.clip = themeSound;
+        musicPlayer.Play();
     }
 
-    // Détermine quelle musique jouer en fonction du nom de la scène
-    private void PlayMusicForScene(string sceneName)
+    public void PlayGameSound()
     {
-        if (sceneName == "New Scene")
-        {
-
-        }
-        else
-        {
-            StopCurrentSound();
-        }
+        musicPlayer.clip = gameSound;
+        musicPlayer.Play();
     }
-
     // Arrête la musique en cours
     public void StopCurrentSound()
     {
-        musicGame.Stop();
+        musicPlayer.Stop();
         sfxPlayer.Stop();
-    }
-
-    private void OnDestroy()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 }

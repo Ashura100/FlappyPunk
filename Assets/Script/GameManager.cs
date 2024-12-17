@@ -1,16 +1,17 @@
 using System;
-using System.Xml.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance { get; private set; }
+    public static GameManager Instance;
 
-    public event Action<bool> IsCrashed;
+    public event Action<bool> OnGameCrashed;
 
     private float _currentScore;
-    public bool _isCrashed;
+    private bool _isCrashed;
 
+    // Gestion du score
     public float CurrentScore
     {
         get => _currentScore;
@@ -21,6 +22,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // Gestion du statut "Crashed"
     public bool IsCrashedStatus
     {
         get => _isCrashed;
@@ -29,57 +31,51 @@ public class GameManager : MonoBehaviour
             if (_isCrashed != value)
             {
                 _isCrashed = value;
-                IsCrashed?.Invoke(_isCrashed); // Déclenche l'événement.
+                OnGameCrashed?.Invoke(_isCrashed); // Déclenche l'événement
             }
         }
     }
 
     private void Awake()
     {
-        if (Instance != null)
+        if (Instance != null && Instance != this)
         {
-            Destroy(this);
+            Destroy(gameObject);
+            return;
         }
-        else
-        {
-            Instance = this;
-        }
+        Instance = this;
     }
 
     private void Start()
     {
-        Time.timeScale = 0;
+        PauseGame(); // Démarre avec le jeu en pause
     }
 
+    // Méthode pour commencer le jeu
     public void StartGame()
     {
         Time.timeScale = 1;
     }
 
+    // Méthode pour mettre le jeu en pause
     public void PauseGame()
     {
         Time.timeScale = 0;
     }
 
-    public void ResetGame()
+    // Méthode pour rejouer la partie proprement (recharge la scène active)
+    public void ReplayGame()
     {
-        CurrentScore = 0;
-        IsCrashedStatus = false;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
+    // Méthode pour quitter proprement
     public void Exit()
     {
-        if (Application.isEditor)//jeu tourne dans l'editeur
-        {
-#if UNITY_EDITOR //Build = Directive de compilation(transformation langage de haut niveau en langage machine)  = si editor =/ compilation ignoré
-            UnityEditor.EditorApplication.isPlaying = false;
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
 #endif
-
-
-        }
-        else
-        {
-            Application.Quit();
-        }
     }
 }

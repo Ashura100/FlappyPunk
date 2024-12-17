@@ -4,76 +4,115 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    public static UIManager Instance { get; private set; }
+    public static UIManager Instance;
 
-    [SerializeField]
-    public TextMeshProUGUI scoreDisplay, messageDisplay;
+    [Header("UI Elements")]
+    [SerializeField] private TextMeshProUGUI scoreDisplay;
+    [SerializeField] private TextMeshProUGUI messageDisplay;
+    [SerializeField] private GameObject startMenu;
+    [SerializeField] private GameObject gameMenu;
+    [SerializeField] private GameObject optionMenu;
+    [SerializeField] private GameObject menuButton;
+    [SerializeField] private GameObject replayButton;
 
     // TMP_Dropdown pour la qualité visuelle
     [SerializeField] public TMP_Dropdown qualityDrop;
     // Slider pour le volume principal et le volume des SFX
     [SerializeField] public Slider musicSlider;
     [SerializeField] public Slider sfxSlider;
-
     // Toggle et label pour le plein écran
     [SerializeField] public Toggle fullScreenToggle;
 
-    [SerializeField] GameObject start, option;
+    bool wasInGame = false;
 
     private void Awake()
     {
-        if (Instance != null)
+        if (Instance != null && Instance != this)
         {
-            Destroy(this);
+            Destroy(gameObject);
+            return;
         }
-        else
-        {
-            Instance = this;
-        }
+        Instance = this;
+    }
+
+    private void Start()
+    {
+        AudioManager.Instance.PlayTheme(); // Joue la musique principale
     }
 
     private void OnEnable()
     {
-        GameManager.Instance.IsCrashed += OnGameOver;
+        GameManager.Instance.OnGameCrashed += OnGameOver;
     }
 
     private void OnDisable()
     {
-        GameManager.Instance.IsCrashed -= OnGameOver;
+        GameManager.Instance.OnGameCrashed -= OnGameOver;
     }
 
-    private void OnGameOver(bool status)
+    // Méthode appelée lorsque le joueur perd
+    private void OnGameOver(bool isCrashed)
     {
-        messageDisplay.text = status ? "Game Over!" : "";
+        if (isCrashed)
+        {
+            messageDisplay.text = "Game Over!";
+            menuButton.SetActive(true);
+            replayButton.SetActive(true);
+            GameManager.Instance.PauseGame();
+        }
+        else
+        {
+            messageDisplay.text = "";
+        }
     }
 
+    // Met à jour l'affichage du score
     public void UpdateScore(float score)
     {
-        scoreDisplay.text = "Score: " + score.ToString("0");
+        scoreDisplay.text = $"Score: {score:0}";
     }
 
+    // Bouton pour démarrer la partie
     public void StartButton()
     {
-        start.SetActive(false);
+        startMenu.SetActive(false);
+        gameMenu.SetActive(true);
         GameManager.Instance.StartGame();
     }
 
+    // Bouton pour rejouer la partie
+    public void ReplayButton()
+    {
+        GameManager.Instance.ReplayGame();
+    }
+
+    // Bouton pour ouvrir le menu pause/options
     public void PauseButton()
     {
-        option.SetActive(true);
+        optionMenu.SetActive(true);
+        wasInGame = true;
         GameManager.Instance.PauseGame();
     }
 
     public void OptionButton()
     {
-        start.SetActive(false);
-        option.SetActive(true);
+        startMenu.SetActive(false);
+        optionMenu.SetActive(true);
     }
 
-    public void ExitOption()
+    public void ExitOptionButton()
     {
-        start.SetActive(true);
-        option.SetActive(false);
+        optionMenu.SetActive(false);
+
+        // Retournez à l'état approprié en fonction de wasInGame
+        if (wasInGame)
+        {
+            GameManager.Instance.StartGame(); // Reprendre le jeu
+        }
+        else
+        {
+            startMenu.SetActive(true); // Retourner au menu principal
+        }
     }
 
     public void ExitButton()

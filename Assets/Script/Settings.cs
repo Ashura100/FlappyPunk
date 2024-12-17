@@ -6,11 +6,11 @@ public class Settings : MonoBehaviour
     void Start()
     {
         // Initialiser les volumes
-        SetVolume(PlayerPrefs.GetFloat("Music", 0.5f));
-        SetSfxVolume(PlayerPrefs.GetFloat("Sfx", 0.5f));
+        SetVolume(PlayerPrefs.GetFloat("MusicVolume", 0.5f));
+        SetSfxVolume(PlayerPrefs.GetFloat("SfxVolume", 0.5f));
 
-        UIManager.Instance.musicSlider.value = PlayerPrefs.GetFloat("Music", 0.5f);
-        UIManager.Instance.sfxSlider.value = PlayerPrefs.GetFloat("Sfx", 0.5f);
+        UIManager.Instance.musicSlider.value = PlayerPrefs.GetFloat("MusicVolume", 0.5f);
+        UIManager.Instance.sfxSlider.value = PlayerPrefs.GetFloat("SfxVolume", 0.5f);
 
         // Initialiser la liste des niveaux de qualité
         UIManager.Instance.qualityDrop.ClearOptions();
@@ -42,16 +42,16 @@ public class Settings : MonoBehaviour
     public void SetVolume(float volume)
     {
         float dB = Mathf.Log10(volume) * 20 - 20;
-        AudioManager.Instance.audioMixer.SetFloat("Music", dB);
-        PlayerPrefs.SetFloat("Music", volume);
+        AudioManager.Instance.audioMixer.SetFloat("MusicVolume", dB);
+        PlayerPrefs.SetFloat("MusicVolume", volume);
     }
 
     // Ajuster le volume des SFX
     public void SetSfxVolume(float volume)
     {
         float dB = Mathf.Log10(volume) * 20;
-        AudioManager.Instance.audioMixer.SetFloat("Sfx", dB);
-        PlayerPrefs.SetFloat("Sfx", volume);
+        AudioManager.Instance.audioMixer.SetFloat("SfxVolume", dB);
+        PlayerPrefs.SetFloat("SfxVolume", volume);
     }
 
     // Activer/désactiver le plein écran
